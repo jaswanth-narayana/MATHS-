@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analysis of Daily Expenses of College Students | Statistics Project</title>
+  <meta name="description" content="An interactive statistical analysis dashboard for college students' daily expenses, featuring descriptive statistics, frequency distribution, Chart.js visualisations, and correlation analysis.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Project Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ================= TOP NAVIGATION ================= -->
+  <header class="navbar" id="topNav">
+    <div class="nav-container">
+      <a href="#dashboard" class="nav-brand">
+        <span class="brand-icon"><i class="fa-solid fa-chart-pie"></i></span>
+        <div class="brand-text">
+          <span class="brand-title">StatExpense</span>
+          <span class="brand-subtitle">College Statistics Project</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" id="navLinks">
+        <a href="#dashboard" class="nav-link active"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+        <a href="#data-entry" class="nav-link"><i class="fa-solid fa-database"></i> Data Entry</a>
+        <a href="#statistics" class="nav-link"><i class="fa-solid fa-calculator"></i> Statistics</a>
+        <a href="#frequency" class="nav-link"><i class="fa-solid fa-table-list"></i> Frequency</a>
+        <a href="#charts" class="nav-link"><i class="fa-solid fa-chart-column"></i> Charts</a>
+        <a href="#interpretation" class="nav-link"><i class="fa-solid fa-lightbulb"></i> Interpretation</a>
+        <a href="#correlation" class="nav-link"><i class="fa-solid fa-chart-line"></i> Correlation</a>
+        <a href="#conclusion" class="nav-link"><i class="fa-solid fa-flag-checkered"></i> Conclusion</a>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="btnQuickSample" class="btn btn-outline-nav" title="Quickly load 30 realistic records">
+          <i class="fa-solid fa-file-import"></i> <span>Sample Data</span>
+        </button>
+        <button id="btnPrintReport" class="btn btn-primary-nav" title="Print or Save Project as PDF">
+          <i class="fa-solid fa-print"></i> <span>Print Report</span>
+        </button>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= MAIN CONTAINER ================= -->
+  <main class="main-content">
+
+    <!-- ================= 1. DASHBOARD / HERO SECTION ================= -->
+    <section class="section hero-section" id="dashboard">
+      <div class="section-container">
+        
+        <div class="hero-badge">
+          <i class="fa-solid fa-graduation-cap"></i> Mathematics & Statistics Term Project
+        </div>
+
+        <h1 class="hero-title">Analysis of Daily Expenses of College Students</h1>
+        <p class="hero-subtitle">
+          An empirical statistical dashboard to investigate daily expenditure patterns among college students. 
+          Analyze central tendency, dispersion, frequency distribution, and explore bivariate correlation with study habits.
+        </p>
+
+        <!-- KPI Summary Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon icon-blue">
+              <i class="fa-solid fa-users"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Total Students Analyzed</span>
+              <span class="kpi-value" id="kpiTotalStudents">0</span>
+              <span class="kpi-subtext" id="kpiSampleSub">Sample size (n)</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon icon-emerald">
+              <i class="fa-solid fa-indian-rupee-sign"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Average Daily Expense</span>
+              <span class="kpi-value" id="kpiAverageExpense">₹0.00</span>
+              <span class="kpi-subtext">Arithmetic Mean (x̄)</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon icon-amber">
+              <i class="fa-solid fa-arrow-down-short-wide"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Minimum Expense</span>
+              <span class="kpi-value" id="kpiMinExpense">₹0.00</span>
+              <span class="kpi-subtext">Lowest Daily Spend</span>
+            </div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-icon icon-rose">
+              <i class="fa-solid fa-arrow-up-wide-short"></i>
+            </div>
+            <div class="kpi-info">
+              <span class="kpi-label">Maximum Expense</span>
+              <span class="kpi-value" id="kpiMaxExpense">₹0.00</span>
+              <span class="kpi-subtext">Highest Daily Spend</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick CTA -->
+        <div class="hero-actions">
+          <a href="#statistics" class="btn btn-primary btn-lg">
+            <i class="fa-solid fa-chart-simple"></i> Start Analysis
+          </a>
+          <a href="#data-entry" class="btn btn-secondary btn-lg">
+            <i class="fa-solid fa-user-plus"></i> Add Expense Record
+          </a>
+          <button id="heroLoadSampleBtn" class="btn btn-outline btn-lg">
+            <i class="fa-solid fa-rotate-right"></i> Load 30 Sample Students
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 2. DATA ENTRY SECTION ================= -->
+    <section class="section" id="data-entry">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div class="section-header-left">
+            <span class="section-tag"><i class="fa-solid fa-pen-to-square"></i> Section 02</span>
+            <h2 class="section-title">Data Entry & Student Records</h2>
+            <p class="section-desc">Add, edit, or remove daily expense records. All inputs are stored locally in your browser so you never lose your project data.</p>
+          </div>
+          <div class="section-header-actions">
+            <button id="btnLoadSample" class="btn btn-success">
+              <i class="fa-solid fa-sparkles"></i> Load Sample Data (30 Students)
+            </button>
+            <button id="btnClearAll" class="btn btn-danger">
+              <i class="fa-solid fa-trash-can"></i> Clear All Data
+            </button>
+          </div>
+        </div>
+
+        <div class="data-entry-layout">
+          
+          <!-- Input Form Card -->
+          <div class="card form-card">
+            <div class="card-header">
+              <h3 class="card-title" id="formTitle">
+                <i class="fa-solid fa-user-plus"></i> Add Student Record
+              </h3>
+              <span class="badge" id="formModeBadge">New Record</span>
+            </div>
+            <div class="card-body">
+              <form id="expenseForm">
+                <input type="hidden" id="editIndex" value="-1">
+
+                <div class="form-group">
+                  <label for="studentId">Student ID <span class="required">*</span></label>
+                  <div class="input-icon-wrap">
+                    <i class="fa-solid fa-id-card"></i>
+                    <input type="text" id="studentId" class="form-control" placeholder="e.g. STU-101" required>
+                  </div>
+                  <small class="form-hint">Unique identifier for the student.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="studentName">Student Name <span class="required">*</span></label>
+                  <div class="input-icon-wrap">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="studentName" class="form-control" placeholder="e.g. Aarav Sharma" required>
+                  </div>
+                  <small class="form-hint">Full name or pseudonym.</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="dailyExpense">Daily Expense (₹) <span class="required">*</span></label>
+                  <div class="input-icon-wrap">
+                    <i class="fa-solid fa-indian-rupee-sign"></i>
+                    <input type="number" id="dailyExpense" class="form-control" placeholder="e.g. 185" min="1" step="0.5" required>
+                  </div>
+                  <small class="form-hint">Enter daily spending in Indian Rupees (₹).</small>
+                </div>
+
+                <div class="form-group">
+                  <label for="studyHours">
+                    Study Hours / Day (Optional)
+                    <span class="badge badge-subtle">For Correlation</span>
+                  </label>
+                  <div class="input-icon-wrap">
+                    <i class="fa-solid fa-clock"></i>
+                    <input type="number" id="studyHours" class="form-control" placeholder="e.g. 4.5" min="0" max="24" step="0.1">
+                  </div>
+                  <small class="form-hint">Daily self-study hours for bivariate analysis.</small>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" id="btnSubmitForm" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-plus-circle"></i> <span id="submitBtnText">Add Student</span>
+                  </button>
+                  <button type="button" id="btnCancelEdit" class="btn btn-outline btn-block" style="display: none;">
+                    <i class="fa-solid fa-xmark"></i> Cancel Edit
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Student Data Table Card -->
+          <div class="card table-card">
+            <div class="card-header table-header-flex">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-table"></i> Student Expense Dataset</h3>
+                <span class="card-subtitle" id="tableRecordCount">Showing 0 records</span>
+              </div>
+              <div class="table-search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="tableSearch" placeholder="Search by name or ID...">
+              </div>
+            </div>
+            
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table" id="studentTable">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;">#</th>
+                      <th>Student ID</th>
+                      <th>Student Name</th>
+                      <th>Daily Expense (₹)</th>
+                      <th>Study Hours</th>
+                      <th style="text-align: right; width: 140px;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="studentTableBody">
+                    <!-- Populated by script.js -->
+                  </tbody>
+                </table>
+              </div>
+              <div id="tableEmptyState" class="empty-state" style="display: none;">
+                <i class="fa-solid fa-folder-open empty-icon"></i>
+                <h4>No Student Records Found</h4>
+                <p>Click "Load Sample Data" to load 30 realistic entries or use the form on the left to add your first student.</p>
+                <button class="btn btn-primary btn-sm mt-3" onclick="loadSampleData()">
+                  <i class="fa-solid fa-sparkles"></i> Load 30 Sample Students
+                </button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 3. STATISTICAL ANALYSIS SECTION ================= -->
+    <section class="section bg-alt" id="statistics">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <span class="section-tag"><i class="fa-solid fa-square-root-variable"></i> Section 03</span>
+            <h2 class="section-title">Statistical Analysis</h2>
+            <p class="section-desc">Key measures of central tendency, statistical dispersion, and variability computed from the dataset.</p>
+          </div>
+        </div>
+
+        <!-- Statistical Cards Grid (7 core measures) -->
+        <div class="stats-grid">
+          
+          <!-- 1. Count -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Sample Size (n)</span>
+              <button class="info-btn" onclick="openFormulaModal('count')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value" id="statCount">0</div>
+            <div class="stat-formula">n = Total students</div>
+            <div class="stat-desc">Number of valid observations in dataset.</div>
+          </div>
+
+          <!-- 2. Mean -->
+          <div class="stat-card highlight-card">
+            <div class="stat-header">
+              <span class="stat-title">Arithmetic Mean (x̄)</span>
+              <button class="info-btn" onclick="openFormulaModal('mean')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value text-indigo" id="statMean">₹0.00</div>
+            <div class="stat-formula">x̄ = (Σx) / n</div>
+            <div class="stat-desc">The average daily spending per student.</div>
+          </div>
+
+          <!-- 3. Median -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Median (M)</span>
+              <button class="info-btn" onclick="openFormulaModal('median')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value text-teal" id="statMedian">₹0.00</div>
+            <div class="stat-formula">Middle value of ordered data</div>
+            <div class="stat-desc">50% students spend below, 50% spend above.</div>
+          </div>
+
+          <!-- 4. Mode -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Mode (Mₒ)</span>
+              <button class="info-btn" onclick="openFormulaModal('mode')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value stat-value-sm" id="statMode">N/A</div>
+            <div class="stat-formula">Most recurring value</div>
+            <div class="stat-desc" id="statModeDesc">Frequency analysis of identical spends.</div>
+          </div>
+
+          <!-- 5. Minimum -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Minimum (xₘᵢₙ)</span>
+              <button class="info-btn" onclick="openFormulaModal('min')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value text-amber" id="statMin">₹0.00</div>
+            <div class="stat-formula">min(x₁, x₂, ..., xₙ)</div>
+            <div class="stat-desc">The most frugal recorded daily expense.</div>
+          </div>
+
+          <!-- 6. Maximum -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Maximum (xₘₐₓ)</span>
+              <button class="info-btn" onclick="openFormulaModal('max')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value text-rose" id="statMax">₹0.00</div>
+            <div class="stat-formula">max(x₁, x₂, ..., xₙ)</div>
+            <div class="stat-desc">The highest recorded daily expense.</div>
+          </div>
+
+          <!-- 7. Range -->
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Range (R)</span>
+              <button class="info-btn" onclick="openFormulaModal('range')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="stat-value" id="statRange">₹0.00</div>
+            <div class="stat-formula">R = xₘₐₓ - xₘᵢₙ</div>
+            <div class="stat-desc">The overall spread between extremes.</div>
+          </div>
+        </div>
+
+        <!-- Auxiliary Academic Box: Quartiles & Coefficient of Variation -->
+        <div class="academic-note-box mt-4">
+          <div class="note-title"><i class="fa-solid fa-circle-info"></i> Additional Descriptive Statistics:</div>
+          <div class="note-metrics">
+            <div class="note-metric-item">
+              <span class="label">First Quartile (Q₁ - 25%):</span>
+              <strong id="statQ1">₹0.00</strong>
+            </div>
+            <div class="note-metric-item">
+              <span class="label">Third Quartile (Q₃ - 75%):</span>
+              <strong id="statQ3">₹0.00</strong>
+            </div>
+            <div class="note-metric-item">
+              <span class="label">Interquartile Range (IQR):</span>
+              <strong id="statIQR">₹0.00</strong>
+            </div>
+            <div class="note-metric-item">
+              <span class="label">Coefficient of Variation (CV):</span>
+              <strong id="statCV">0.0%</strong>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 4. FREQUENCY DISTRIBUTION SECTION ================= -->
+    <section class="section" id="frequency">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <span class="section-tag"><i class="fa-solid fa-bars-staggered"></i> Section 04</span>
+            <h2 class="section-title">Frequency Distribution Table</h2>
+            <p class="section-desc">Continuous data classified into standard class intervals of daily expenses to examine grouping patterns.</p>
+          </div>
+          <div class="modal-badge-wrapper">
+            <span class="badge badge-indigo" id="modalClassBadge">Modal Class: Calculating...</span>
+          </div>
+        </div>
+
+        <div class="frequency-layout">
+          <div class="card">
+            <div class="card-body p-0">
+              <div class="table-responsive">
+                <table class="data-table freq-table">
+                  <thead>
+                    <tr>
+                      <th>Expense Range (Class Interval)</th>
+                      <th>Class Midpoint (xᵢ)</th>
+                      <th>Frequency (fᵢ)</th>
+                      <th>Cumulative Frequency (cf)</th>
+                      <th>Percentage (%)</th>
+                      <th style="min-width: 180px;">Visual Distribution</th>
+                    </tr>
+                  </thead>
+                  <tbody id="frequencyTableBody">
+                    <!-- Populated dynamically by script.js -->
+                  </tbody>
+                  <tfoot id="frequencyTableFoot">
+                    <!-- Total row -->
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 5. CHARTS SECTION ================= -->
+    <section class="section bg-alt" id="charts">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <span class="section-tag"><i class="fa-solid fa-chart-area"></i> Section 05</span>
+            <h2 class="section-title">Statistical Visualizations</h2>
+            <p class="section-desc">Interactive dynamic graphical representations created with Chart.js, updating instantly upon every data change.</p>
+          </div>
+        </div>
+
+        <!-- 3 Required Charts Grid -->
+        <div class="charts-grid">
+          
+          <!-- Chart 1: Histogram for Expense Distribution -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-chart-column"></i> Expense Distribution Histogram</h3>
+                <span class="card-subtitle">Frequency of students across defined ₹ brackets</span>
+              </div>
+            </div>
+            <div class="card-body chart-body">
+              <canvas id="histogramChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 2: Doughnut / Pie Chart for Expense Ranges -->
+          <div class="card chart-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-chart-pie"></i> Expense Range Breakdown</h3>
+                <span class="card-subtitle">Percentage proportion of total student body</span>
+              </div>
+            </div>
+            <div class="card-body chart-body">
+              <canvas id="pieChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Chart 3: Bar Chart for Individual Student Expenses -->
+          <div class="card chart-card chart-card-wide">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-chart-bar"></i> Individual Student Daily Expenses</h3>
+                <span class="card-subtitle">Direct comparison of each student's daily spend against class mean (dashed red line)</span>
+              </div>
+              <div class="chart-filter-toggle">
+                <button class="pill-btn active" id="btnSortExpenseOrder">Dataset Order</button>
+                <button class="pill-btn" id="btnSortExpenseAsc">Ascending</button>
+                <button class="pill-btn" id="btnSortExpenseDesc">Descending</button>
+              </div>
+            </div>
+            <div class="card-body chart-body" style="height: 380px;">
+              <canvas id="individualBarChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 6. INTERPRETATION SECTION ================= -->
+    <section class="section" id="interpretation">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <span class="section-tag"><i class="fa-solid fa-brain"></i> Section 06</span>
+            <h2 class="section-title">Automated Statistical Interpretation</h2>
+            <p class="section-desc">Dynamic natural-language analysis derived strictly from mathematical computations of the student sample.</p>
+          </div>
+        </div>
+
+        <div class="interpretation-grid">
+          
+          <div class="interpret-card">
+            <div class="interpret-icon icon-blue">
+              <i class="fa-solid fa-clipboard-check"></i>
+            </div>
+            <div class="interpret-content">
+              <h4>Sample Size & Scope</h4>
+              <p id="interpretSampleSize">Loading interpretation...</p>
+            </div>
+          </div>
+
+          <div class="interpret-card">
+            <div class="interpret-icon icon-emerald">
+              <i class="fa-solid fa-scale-balanced"></i>
+            </div>
+            <div class="interpret-content">
+              <h4>Central Tendency (Average Spend)</h4>
+              <p id="interpretCentralTendency">Loading interpretation...</p>
+            </div>
+          </div>
+
+          <div class="interpret-card">
+            <div class="interpret-icon icon-indigo">
+              <i class="fa-solid fa-fire"></i>
+            </div>
+            <div class="interpret-content">
+              <h4>Modal Bracket & Concentration</h4>
+              <p id="interpretMode">Loading interpretation...</p>
+            </div>
+          </div>
+
+          <div class="interpret-card">
+            <div class="interpret-icon icon-amber">
+              <i class="fa-solid fa-arrows-left-right-to-line"></i>
+            </div>
+            <div class="interpret-content">
+              <h4>Variability & Expense Spread</h4>
+              <p id="interpretDispersion">Loading interpretation...</p>
+            </div>
+          </div>
+
+          <div class="interpret-card">
+            <div class="interpret-icon icon-purple">
+              <i class="fa-solid fa-chart-simple"></i>
+            </div>
+            <div class="interpret-content">
+              <h4>Distribution Symmetry (Skewness)</h4>
+              <p id="interpretSkewness">Loading interpretation...</p>
+            </div>
+          </div>
+
+          <div class="interpret-card">
+            <div class="interpret-icon icon-rose">
+              <i class="fa-solid fa-compass"></i>
+            </div>
+            <div class="interpret-content">
+              <h4>Key Extreme Spending Findings</h4>
+              <p id="interpretExtremes">Loading interpretation...</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 7. OPTIONAL CORRELATION SECTION ================= -->
+    <section class="section bg-alt" id="correlation">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <div class="optional-pill"><i class="fa-solid fa-star"></i> Optional Additional Analysis</div>
+            <h2 class="section-title">Bivariate Analysis: Study Hours vs. Daily Expenses</h2>
+            <p class="section-desc">Investigating whether there exists an empirical linear relationship between a student's daily self-study hours and their daily expenditure.</p>
+          </div>
+        </div>
+
+        <div class="correlation-layout">
+          
+          <!-- Scatter Plot Card -->
+          <div class="card correlation-chart-card">
+            <div class="card-header">
+              <div>
+                <h3 class="card-title"><i class="fa-solid fa-circle-nodes"></i> Scatter Diagram & Trend Line</h3>
+                <span class="card-subtitle">X-axis: Study Hours/Day | Y-axis: Daily Expense (₹)</span>
+              </div>
+            </div>
+            <div class="card-body chart-body" style="height: 380px;">
+              <canvas id="scatterChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Correlation Metrics & Interpretation Card -->
+          <div class="card correlation-info-card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fa-solid fa-calculator"></i> Correlation Statistics</h3>
+              <button class="info-btn" onclick="openFormulaModal('correlation')" title="How is this calculated?">
+                <i class="fa-solid fa-circle-question"></i>
+              </button>
+            </div>
+            <div class="card-body">
+              
+              <div class="corr-stat-row">
+                <div class="corr-metric">
+                  <span class="corr-label">Pearson Correlation Coefficient (r)</span>
+                  <div class="corr-value" id="corrRValue">0.000</div>
+                  <span class="corr-badge" id="corrStrengthBadge">Calculating...</span>
+                </div>
+              </div>
+
+              <div class="corr-stat-row mt-3">
+                <div class="corr-sub-grid">
+                  <div class="corr-mini-stat">
+                    <span class="label">Coeff. of Determination (r²):</span>
+                    <strong id="corrR2Value">0.00%</strong>
+                  </div>
+                  <div class="corr-mini-stat">
+                    <span class="label">Regression Line:</span>
+                    <strong id="corrEquation">y = mx + c</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="corr-interpretation mt-4">
+                <h5><i class="fa-solid fa-comment-dots"></i> Correlation Interpretation:</h5>
+                <p id="corrInterpretationText">
+                  Evaluating bivariate pairs...
+                </p>
+              </div>
+
+              <div class="formula-preview-box mt-3">
+                <code>r = [nΣxy - (Σx)(Σy)] / √{[nΣx² - (Σx)²][nΣy² - (Σy)²]}</code>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ================= 8. CONCLUSION SECTION ================= -->
+    <section class="section" id="conclusion">
+      <div class="section-container">
+        
+        <div class="section-header">
+          <div>
+            <span class="section-tag"><i class="fa-solid fa-file-lines"></i> Section 08</span>
+            <h2 class="section-title">Project Conclusion & Summary</h2>
+            <p class="section-desc">Comprehensive academic synthesis of findings, statistical deductions, and budgeting insights for college students.</p>
+          </div>
+        </div>
+
+        <div class="conclusion-card card">
+          <div class="card-body">
+            
+            <div class="conclusion-header">
+              <div class="conclusion-icon">
+                <i class="fa-solid fa-award"></i>
+              </div>
+              <div>
+                <h3>Statistical Findings Summary</h3>
+                <p class="text-muted">Analysis of Daily Expenses of College Students</p>
+              </div>
+            </div>
+
+            <div class="conclusion-content" id="conclusionDynamicText">
+              <!-- Dynamically populated by script.js -->
+            </div>
+
+            <hr class="divider">
+
+            <div class="recommendations-box">
+              <h4><i class="fa-solid fa-lightbulb text-amber"></i> Practical Budgeting Recommendations for Students</h4>
+              <ul class="rec-list">
+                <li>
+                  <i class="fa-solid fa-check-circle text-emerald"></i>
+                  <strong>Establish a Weekly Allowance:</strong> Setting a weekly limit pegged close to the median daily expense helps curb impulsive spending on non-essential cafeteria items or entertainment.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check-circle text-emerald"></i>
+                  <strong>Group Travel & Study Material Sharing:</strong> Commute and educational expenses can be cut significantly through ride-sharing or digital resource circulation.
+                </li>
+                <li>
+                  <i class="fa-solid fa-check-circle text-emerald"></i>
+                  <strong>Active Tracking:</strong> Students who actively log daily expenditures remain within the middle 50% spending bracket (IQR), avoiding extreme debt or budget shock.
+                </li>
+              </ul>
+            </div>
+
+            <div class="project-meta-footer">
+              <div class="meta-item">
+                <span class="meta-label">Project Domain</span>
+                <span class="meta-val">Descriptive & Bivariate Statistics</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Dataset Method</span>
+                <span class="meta-val">Sample Survey & Local Persistence</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Submission Level</span>
+                <span class="meta-val">College Mathematics / Term 1</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-label">Status</span>
+                <span class="meta-val text-emerald"><i class="fa-solid fa-circle-check"></i> Validated & Computationally Accurate</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <h4>Analysis of Daily Expenses of College Students</h4>
+        <p>A college Mathematics & Statistics interactive dashboard project.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#data-entry">Data Entry</a>
+        <a href="#statistics">Statistics</a>
+        <a href="#frequency">Frequency</a>
+        <a href="#charts">Charts</a>
+        <a href="#conclusion">Conclusion</a>
+      </div>
+      <div class="footer-copy">
+        <p>© Built for College Mathematics / Statistics Term Project. All calculations performed client-side.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================= HOW IS THIS CALCULATED? FORMULA MODAL ================= -->
+  <div class="modal-backdrop" id="formulaModal" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <i class="fa-solid fa-calculator text-indigo"></i>
+          <h3 id="modalFormulaTitle">Statistical Measure</h3>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">&times;</button>
+      </div>
+      <div class="modal-body" id="modalFormulaBody">
+        <!-- Injected dynamically -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="modalGotItBtn">Got It</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification System -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Project JavaScript -->
+  <script src="script.js"></script>
+</body>
+</html>
